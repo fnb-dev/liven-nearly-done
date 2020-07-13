@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <title>Liven passport</title>
+    <link rel="stylesheet" href="liven-passport.css">
+</head>
+
+<body>
+    <div class="liven-passport-body">
+            <a href="app.liven.com.au/faq" class="faq-link">FAQ</a>
+            <div class="cloud left">
+                <img src="cloud-left.svg" alt="Cloud left">
+            </div>
+            <div class="lead">
+                <div class="icon-wrap">
+                    <img src="passport-icon.svg" alt="Liven passport icon" class="liven-passport-icon">
+                    <div id="svgContainer"></div>
+                </div>
+                <div class="checking-text">Securely checking you in...</div>
+                <img src="Liven-Passport-text.svg" alt="Liven passport text" class="liven-passport-text">
+                <h4>Securely check-in to <br> {{event_properties.${merchant_name}}}</h4>
+            </div>
+            <div class="cloud right">
+                <img src="cloud-right.svg" alt="Cloud right">
+            </div>
+            <div class="city-img"><img src="city.svg" alt="City image"></div>
+            <div class="success-message">Enjoy earning rewards when you pay with Liven at checkout!</div>
+            <ul class="trigering-wrap">
+                <li class="d-flex trigering-item">
+                    <p>I have <span class="count-dependince" id="count-dependince">0</span> dependents with me</p>
+                    <div class="dependents-triger">
+                        <button class="dicrease" id="dicrease"  style='-webkit-tap-highlight-color:transparent'></button>
+                        <button class="increase" id="increase" style='-webkit-tap-highlight-color:transparent'></button>
+                    </div>
+                </li>
+                <li class="d-flex trigering-item">
+                    <p>Notify me about exclusive Calia offers</p>
+                    <div class="switch" style='-webkit-tap-highlight-color:transparent'>
+                        <input type="checkbox" name="notify" id="notify" checked>
+                        <label for="notify" class="slider round"></label>
+                    </div>
+                </li>
+            </ul>
+            <div class="slidebutton-wrap">
+                <a href="appboy://close" class="continue-action">Close</a>
+                <span class="button-text">Slide to confirm</span>
+                <div class="slidershell" id="slidershell">
+                    <input class="slider" id="slider" type="range" min="0" max="100" value="0"
+    oninput="showValue(value);" onchange="showValue(value);"/>
+                    <div class="sliderfill" id="sliderfill"></div>
+                    <div class="sliderthumb" id="sliderthumb"></div>
+                </div>
+
+            </div>
+            <div class="note-text">
+                I declare my details with Liven are correct &amp; <br> I am not currently suffering flu-like symptoms.
+            </div>
+            <div id="attributes" style="display: none;">
+                <div id="firstName">
+                    {{${first_name}}}
+                </div>
+                <div id="lastName">
+                    {{${last_name}}}
+                </div>
+                <div id="email">
+                    {{${email_address}}}
+                </div>
+                <div id="phone">
+                    {{${phone_number}}}
+                </div>
+                <div id="branchId">
+                    {{event_properties.${branch_id}}}
+                </div>
+                <div id="merchantId">
+                    {{event_properties.${merchant_id}}}
+                </div>
+                <div id="merchantName">
+                    {{event_properties.${merchant_name}}}
+                </div>
+                <div id="referralCode">
+                    {{${user_id}}}
+                </div>
+            </div>
+        </div>
+    <script src="jquery-3.5.1.min.js"></script>
+    <script src="TweenMax.min.js"></script>
+    <script src="lottie.js"></script>
+    <script>
+        
+        var n_dependents = 0;
+        var d = 1;
+        
+        (function($){
+            $(function(){
+
+                                
+                $("#dicrease").on("click", function(){
+                    if(n_dependents>0){
+                        n_dependents--;
+                        d--;
+                        $('#count-dependince').html(n_dependents);
+                    }
+                    if(n==0){
+                        $("#dicrease").removeClass("active");
+                    }
+                });
+                
+                $("#increase").on("click", function(){
+                    if(n_dependents>=0){
+                        n_dependents++;
+                        d++;
+                        $('#count-dependince').html(n_dependents);
+                    }
+                    if(n_dependents>0){
+                        $("#dicrease").addClass("active");
+                    }
+                });
+                
+                $("#notify").on("change", function(){
+                    if(this.checked) {
+                        // var returnVal = confirm("Are you sure?");
+                        // $(this).prop("checked", returnVal);
+                    }
+                });
+        
+                // Lottie function
+                var svgContainer = document.getElementById('svgContainer');
+                var animItem = bodymovin.loadAnimation({
+                  wrapper: svgContainer,
+                  renderer: 'svg',
+                  autoplay: false,
+                  animType: 'svg',
+                  loop: false,
+                  path: 'https://assets4.lottiefiles.com/packages/lf20_8xkSB4/liven loader.json',
+                });
+
+                animItem.onComplete = function() {
+                    $(".trigering-wrap").fadeOut(function(){
+                        $(".success-message").show();
+                    });
+                    $('body').removeClass("checking");
+                    $(".lead h4").html("<span>Easy as pie! </span> Enjoy your time and<br>please stay safe.");
+                    $(".liven-passport-body").addClass("complete");
+                    $(".slidebutton-wrap").addClass("completed").find(".button-text").text("Continue");
+                }
+                
+                /*$(".continue-action").click(function(e){
+                    e.preventDefault();
+                    console.log("I've clicked")
+                    window.location = "appboy://close"
+                })*/
+                              
+                
+            }); //End Ready function
+        })(jQuery)
+        
+        
+        var slider = document.getElementById("slider"),
+            maxValue = 100,
+            speed = 5,
+            currValue, rafID;
+        
+            slider.min = 0;
+            slider.max = maxValue;
+        
+            /* setup variables for the elements of our slider */
+            var slideWrap = document.getElementsByClassName("slidebutton-wrap")[0];
+            var thumb = document.getElementById("sliderthumb");
+            var shell = document.getElementById("slidershell");
+            var fill = document.getElementById("sliderfill"); /* the percentage slider value */
+            var thumbsize = 56; /* must match the thumb size in your css */
+            var bigval = slideWrap.offsetWidth; //250; /* widest or tallest value depending on orientation */
+            var smallval = 0; /* narrowest or shortest value depending on orientation */
+   console.log(bigval)
+        function showValue(val) {
+            
+            var pc = val/(slider.max - slider.min);
+            var tracksize = bigval - thumbsize;
+            var loc = pc * tracksize;
+            slider.min = 0;
+            slider.max = maxValue;
+
+            //document.getElementById("blur").setAttribute("stdDeviation", val/10);
+            thumb.style.top =   "0px";
+            thumb.style.left =  loc + "px";
+            fill.style.left =  "0px";
+            fill.style.width =  loc + thumbsize + "px";
+        }
+        
+        /* we often need a function to set the slider values on page load */
+        function setValue(val) {
+            document.getElementById("slider").value = val;
+            showValue(val);
+        }
+
+        setValue(0);
+            // listen for unlock
+            function unlockStartHandler() {
+                // clear raf if trying again
+                window.cancelAnimationFrame(rafID);
+
+                // set to desired value
+                currValue = +this.value;
+            }
+
+            function unlockEndHandler() {
+
+                // store current value
+                currValue = +this.value;
+
+                // determine if we have reached success or not
+                if(currValue >= 90 || currValue >= maxValue) {
+                    successHandler();
+                }
+                
+                // determine if we have reached success or not
+                if (currValue < 5) {
+                    jQuery(".sliderthumb").removeClass("active");
+                }
+                
+                if(currValue <= 90 ) {
+                    TweenMax.to(thumb, 0.3, {
+                        css: {
+                            left: 0
+                        },
+                        ease: Sine.easeOut
+                    });
+                    TweenMax.to(fill, 0.3, {
+                        css: {
+                            width: 35+'px'
+                        },
+                        ease: Sine.easeOut
+                    });
+                    currValue = 0;
+                    slider.value = 0
+                    
+                    jQuery('body').removeClass("checking");
+                    jQuery(".slidebutton-wrap").removeClass("sliding").find(".button-text").text("Slide to confirm");
+
+                    jQuery(".icon-wrap").removeClass("show");
+                    lottie.stop();
+                }
+                
+                if(currValue > 90 ) {
+                    
+                    var pc = 0/(slider.max - slider.min);
+                    var tracksize = bigval - thumbsize;
+                    var loc = pc * tracksize;
+                    
+                    currValue = maxValue;
+                    slider.value = maxValue
+                    
+                    TweenMax.to(thumb, 0.5, {
+                        css: {
+                            left: tracksize + "px"
+                        },
+                        ease: Sine.easeOut
+                    });
+                    TweenMax.to(fill, 0.5, {
+                        css: {
+                            width: bigval
+                        },
+                        ease: Sine.easeOut
+                    });
+                    
+                    jQuery('body').addClass("checking");
+                    jQuery(".slidebutton-wrap").addClass("sliding").find(".button-text").text("Confirmed "+ d +" persons");
+
+                    jQuery(".icon-wrap").addClass("show");
+                    lottie.play();
+                    setTimeout(function(){
+                        jQuery(".slidebutton-wrap").removeClass("sliding");
+                        jQuery(".slidebutton-wrap").addClass("completed");
+                        jQuery(".sliderthumb").fadeOut(500);
+                    }, 600);
+                }
+                else {
+                    rafID = window.requestAnimationFrame(animateHandler);
+                }
+            }
+
+            // handle range animation
+            function animateHandler() {
+
+                // calculate gradient transition
+                var transX = currValue - maxValue;
+
+                // update input range
+                slider.value = currValue;
+
+                if (currValue < 5) {
+                    jQuery(".sliderthumb").removeClass("active");
+                }
+                
+                //Change slide thumb color on mouse up
+                
+                if (this.value > 50) {
+                    slideWrap.classList.add('sliding');
+                }
+                
+                if (this.value < 50) {
+                    slideWrap.classList.remove('sliding');
+                    
+                    slider.value = 0;
+                }
+
+                // determine if we need to continue
+                if(currValue > -1) {
+                  window.requestAnimationFrame(animateHandler);
+                }
+
+                // decrement value
+                currValue = currValue - speed;
+            }
+
+            // handle successful unlock
+            function successHandler(){
+              //alert('Unlocked');
+
+                var dependents = n_dependents
+                var firstName = document.getElementById("firstName").innerHTML
+                var lastName = document.getElementById("lastName").innerHTML
+                var email = document.getElementById("email").innerHTML
+                var phone = document.getElementById("phone").innerHTML
+                var referralCode = document.getElementById("referralCode").innerHTML
+                var branchId = document.getElementById("branchId").innerHTML
+                var merchantName = document.getElementById("merchantName").innerHTML
+                var merchantId = document.getElementById("merchantId").innerHTML
+                if(d == 1 ) {
+                    var optIn = 'true'
+                }
+                else {
+                    var optIn = 'false'
+                }
+
+                var data = {
+                    dependents: dependents,
+                    firstName: firstName,
+                    lastName: lastName,
+                    email: email,
+                    phone: phone,
+                    referralCode: referralCode,
+                    optIn: optIn,
+                    branchId: branchId,
+                    merchantName: merchantName,
+                    merchantId: merchantId,
+                    queryType: 'app_checkin'
+                }
+
+
+                var url = 'https://r919iwuwik.execute-api.ap-southeast-2.amazonaws.com/UAT/passportDev'
+                fetch(url, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    body: JSON.stringify(data)
+                }).then(response => console.log(response.json()))
+
+
+                jQuery('body').addClass("checking");
+                jQuery(".slidebutton-wrap").addClass("sliding").find(".button-text").text("Confirmed "+ d +" persons");
+
+                jQuery(".icon-wrap").addClass("show");
+                lottie.play();
+                setTimeout(function(){
+                    jQuery(".slidebutton-wrap").removeClass("sliding");
+                    jQuery(".slidebutton-wrap").addClass("completed");
+                    jQuery(".sliderthumb").fadeOut(500);
+                }, 600);
+
+            };
+
+            // bind events
+            slider.addEventListener('mousedown', unlockStartHandler, false);
+            slider.addEventListener('mousestart', unlockStartHandler, false);
+            slider.addEventListener('mouseup', unlockEndHandler, false);
+            slider.addEventListener('touchend', unlockEndHandler, false);
+        
+        // move gradient
+        slider.addEventListener('input', function() {
+            //Change slide thumb color on way up
+            if (this.value > 5) {
+                jQuery(".sliderthumb").addClass("active");
+            }
+            //Change slide thumb color on way up
+            if (this.value > 20) {
+                slideWrap.classList.add('ltpurple');
+            }
+            if (this.value > 40) {
+                slideWrap.classList.add('sliding');
+            }
+            
+            if (this.value < 5) {
+                jQuery(".sliderthumb").removeClass("active");
+            }
+            
+            if (this.value < 50) {
+                slideWrap.classList.remove('sliding');
+            }
+        });
+    </script>
+</body>
+</html>
